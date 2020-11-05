@@ -104,7 +104,7 @@ func Test_productList_update(t *testing.T) {
 	}
 }
 
-func Test_productList_delete(t *testing.T) {
+func Test_productList_remove(t *testing.T) {
 	type args struct {
 		index int
 	}
@@ -117,7 +117,7 @@ func Test_productList_delete(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.products.delete(tt.args.index)
+			tt.products.remove(tt.args.index)
 		})
 	}
 }

@@ -14,7 +14,7 @@ type icart interface {
 	getAll()
 	add(item product)
 	update(updatedEntry product, index int)
-	delete(index int)
+	remove(index int)
 }
 
 func print(item product) {
@@ -57,7 +57,7 @@ func (products *productList) update(updatedEntry product, index int) {
 
 }
 
-func (products *productList) delete(index int) {
+func (products *productList) remove(index int) {
 	length := len(*products)
 	(*products)[index] = (*products)[length-1]
 	*products = (*products)[:length-1]
@@ -110,12 +110,12 @@ func main() {
 				fmt.Println("Product not found")
 			}
 		case 3:
-			fmt.Println("enter id of the product to be deleted")
+			fmt.Println("enter id of the product to be removed")
 			var ID string
 			fmt.Scanf("%v", &ID)
 			_, index := cart.get(ID)
 			if index != -1 {
-				cart.delete(index)
+				cart.remove(index)
 			} else {
 				fmt.Println("Product not found")
 			}
