@@ -34,15 +34,15 @@ func Test_fibo(t *testing.T) {
 	}
 }
 
-func benchmarkFibo(i int, b *testing.B) {
-	for n := 0; n < b.N; n++ {
-		fibo(i)
+func Test_main(t *testing.T) {
+	tests := []struct {
+		name string
+	}{
+		{"Main"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			main()
+		})
 	}
 }
-
-func Benchmark_fibo1(b *testing.B)  { benchmarkFibo(1, b) }
-func Benchmark_fibo2(b *testing.B)  { benchmarkFibo(2, b) }
-func Benchmark_fibo3(b *testing.B)  { benchmarkFibo(3, b) }
-func Benchmark_fibo10(b *testing.B) { benchmarkFibo(10, b) }
-func Benchmark_fibo45(b *testing.B) { benchmarkFibo(45, b) }
-func Benchmark_fibo78(b *testing.B) { benchmarkFibo(78, b) }

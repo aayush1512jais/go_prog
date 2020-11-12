@@ -1,10 +1,12 @@
-package main
+//package main
 
+/*
 import (
 	"fmt"
 )
 
 var cache = make(map[int]int)
+
 var lastVal int = 1
 
 func fibo(num int) int {
@@ -40,3 +42,4 @@ func main() {
 		fmt.Printf("Fibonacci number for negative index is not available")
 	}
 }
+*/
