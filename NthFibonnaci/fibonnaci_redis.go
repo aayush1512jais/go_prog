@@ -18,18 +18,22 @@ func fibo(num int) int {
 		if err != nil {
 			log.Fatal(err)
 		}
-		for i := length + 1; i <= num; i++ {
+		for i := length; i <= num; i++ {
 			//	cache[i] = cache[i-1] + cache[i-2]
 			num1, err := redis.Int(conn.Do("HGET", "Fibonnaci", i-1))
 			num2, err := redis.Int(conn.Do("HGET", "Fibonnaci", i-2))
 			num3 := num1 + num2
-			_, err = conn.Do("HMSET", "Fibonnaci", i, num3)
+			_, err = conn.Do("HSETNX", "Fibonnaci", i, num3)
 			if err != nil {
 				log.Fatal(err)
 			}
 		}
+
 		value, err := redis.Int(conn.Do("HGET", "Fibonnaci", num))
-		//lastVal = num
+		if err != nil {
+			log.Fatal(err)
+		}
+
 		return value //cache[num]
 	} else {
 		return -1
@@ -46,10 +50,11 @@ func main() {
 	conn := pool.Get()
 
 	defer conn.Close()
-	_, err := conn.Do("HMSET", "Fibonnaci", 0, 0, 1, 1)
-	if err != nil {
-		log.Fatal(err)
-	}
+
+	conn.Do("HSETNX", "Fibonnaci", 0, 0)
+
+	conn.Do("HSETNX", "Fibonnaci", 1, 1)
+
 	var input, result int
 	fmt.Scanf("%v", &input)
 	if num, err := redis.Int(conn.Do("HGET", "Fibonnaci", input)); err == nil {
