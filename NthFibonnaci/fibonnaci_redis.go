@@ -3,9 +3,12 @@ package main
 import (
 	"fmt"
 	"log"
+	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gomodule/redigo/redis"
+	"github.com/gorilla/mux"
 )
 
 var pool *redis.Pool
@@ -39,6 +42,27 @@ func fibo(num int) int {
 		return -1
 	}
 }
+
+func getFibo(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	conn := pool.Get()
+	var result int
+	input, _ := strconv.Atoi(params["num"])
+	if num, err := redis.Int(conn.Do("HGET", "Fibonnaci", input)); err == nil {
+		result = num
+	} else {
+		result = fibo(input)
+		//fmt.Printf("notpresent")
+	}
+
+	if result >= 0 {
+		fmt.Fprintf(w, "Fibonacci number at %dth place is %d", input, result)
+	} else {
+		fmt.Fprintf(w, "Fibonacci number for negative index is not available")
+	}
+}
+
 func main() {
 	pool = &redis.Pool{
 		MaxIdle:     10,
@@ -55,18 +79,24 @@ func main() {
 
 	conn.Do("HSETNX", "Fibonnaci", 1, 1)
 
-	var input, result int
-	fmt.Scanf("%v", &input)
-	if num, err := redis.Int(conn.Do("HGET", "Fibonnaci", input)); err == nil {
-		result = num
-	} else {
-		result = fibo(input)
-		//fmt.Printf("notpresent")
-	}
+	router := mux.NewRouter()
 
-	if result >= 0 {
-		fmt.Printf("Fibonacci number at %dth place is %d", input, result)
-	} else {
-		fmt.Printf("Fibonacci number for negative index is not available")
-	}
+	router.HandleFunc("/fibonnaci/{num}", getFibo).Methods("GET")
+
+	log.Fatal(http.ListenAndServe(":8000", router))
+
+	// var input, result int
+	// fmt.Scanf("%v", &input)
+	// if num, err := redis.Int(conn.Do("HGET", "Fibonnaci", input)); err == nil {
+	// 	result = num
+	// } else {
+	// 	result = fibo(input)
+	// 	//fmt.Printf("notpresent")
+	// }
+
+	// if result >= 0 {
+	// 	fmt.Printf("Fibonacci number at %dth place is %d", input, result)
+	// } else {
+	// 	fmt.Printf("Fibonacci number for negative index is not available")
+	// }
 }
