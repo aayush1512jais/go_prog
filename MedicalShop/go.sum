@@ -1,2 +1,9 @@
+github.com/aayush1512jais/go_prog v0.0.0-20201122170623-b8969a0e528e h1:EuZOLTKn22YnrNmm6TgeCS9Wh9JANE090kBCc8KsOfU=
 github.com/gorilla/mux v1.8.0 h1:i40aqfkR1h2SlN9hojwV5ZA91wcXFOvkdNIeFDP5koI=
 github.com/gorilla/mux v1.8.0/go.mod h1:DVbg23sWSpFRCP0SfiEN6jmj59UnW/n46BH5rLB71So=
+github.com/joho/godotenv v1.3.0 h1:Zjp+RcGpHhGlrMbJzXTrZZPrWj+1vfm90La1wgB6Bhc=
+github.com/joho/godotenv v1.3.0/go.mod h1:7hK45KPybAkOC6peb+G5yklZfMxEjkZhHbwpqxOKXbg=
+github.com/lib/pq v1.8.0 h1:9xohqzkUwzR4Ga4ivdTcawVS89YSDVxXMa3xJX3cGzg=
+github.com/lib/pq v1.8.0/go.mod h1:AlVN5x4E4T544tWzH6hKfbfQvm3HdbOxrmggDNAPY9o=
+gopkg.in/alioygur/gores.v1 v1.2.1 h1:Qux/qdabrAg6B8Qp23KwnBfhJ0Dag79QfxWaBkM/OXc=
+gopkg.in/alioygur/gores.v1 v1.2.1/go.mod h1:/sU+xqnLiHPisnkMp2RCZrEXk390qQVAwrWtOZ5ewm0=

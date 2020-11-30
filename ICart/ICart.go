@@ -7,9 +7,15 @@ type product struct {
 	name string
 }
 
-type productList []product //products list
+type cart struct{
+	productList []product 
+}
 
-type icart interface {
+func NewCart ()(*cart){
+	return &cart{product}
+}
+
+type iCart interface {
 	get(id string) (product, int)
 	getAll()
 	add(item product)
