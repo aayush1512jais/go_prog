@@ -22,18 +22,18 @@ type MedicineController interface {
 	GetAll(w http.ResponseWriter, r *http.Request)
 }
 
-type medicineController struct {
-	service service.MedicineService
+type Controller struct {
+	service service.Service
 }
 
-func New(service service.MedicineService) MedicineController {
-	return &medicineController{
+func NewMedicineController(service service.Service) *Controller {
+	return &Controller{
 		service: service,
 	}
 
 }
 
-func (c *medicineController) Add(w http.ResponseWriter, r *http.Request) {
+func (c *Controller) Add(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var medicine model.Medicine
 	if err := json.NewDecoder(r.Body).Decode(&medicine); err == nil {
@@ -61,7 +61,7 @@ func (c *medicineController) Add(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (c *medicineController) Update(w http.ResponseWriter, r *http.Request) {
+func (c *Controller) Update(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var medicine *model.Medicine
 	if err := json.NewDecoder(r.Body).Decode(&medicine); err == nil {
@@ -86,7 +86,7 @@ func (c *medicineController) Update(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (c *medicineController) Delete(w http.ResponseWriter, r *http.Request) {
+func (c *Controller) Delete(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
 	if id, err := strconv.Atoi(params["id"]); err == nil {
@@ -110,7 +110,7 @@ func (c *medicineController) Delete(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (c *medicineController) Get(w http.ResponseWriter, r *http.Request) {
+func (c *Controller) Get(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
 	if id, err := strconv.Atoi(params["id"]); err == nil {
@@ -134,7 +134,7 @@ func (c *medicineController) Get(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (c *medicineController) GetAll(w http.ResponseWriter, r *http.Request) {
+func (c *Controller) GetAll(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	medicines, err := c.service.GetAll()
 	if err == (apperrors.ErrorModel{}) {

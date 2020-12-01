@@ -47,9 +47,9 @@ func LoadApp() apperrors.ErrorModel { //(*AppContext, error) {
 	//fmt.Println("database connection %v", status)
 
 	//var err apperrors.ErrorHandler = apperrors.NewErrorHandler()
-	var repository db.RepositoryInterface = db.NewRepository(database)
-	var medicineService service.MedicineService = service.NewMedicineService(repository) //, err)
-	var medicineController controller.MedicineController = controller.New(medicineService)
+	repository := db.NewRepository(database)
+	medicineService := service.NewMedicineService(*repository) //, err)
+	medicineController := controller.NewMedicineController(*medicineService)
 
 	router := SetupRoutes(medicineController)
 

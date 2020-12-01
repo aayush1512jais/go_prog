@@ -16,7 +16,7 @@ const (
 	MedicineIsExpiredCol = "is_expired"
 )
 
-type repository struct{ db *sql.DB }
+type Repository struct{ db *sql.DB }
 
 type RepositoryInterface interface {
 	AddMedicine(medicine model.Medicine) (int, error)
@@ -26,12 +26,12 @@ type RepositoryInterface interface {
 	DeleteMedicine(id int) error
 }
 
-func NewRepository(database *sql.DB) RepositoryInterface {
-	return &repository{
+func NewRepository(database *sql.DB) *Repository {
+	return &Repository{
 		db: database,
 	}
 }
-func (repo *repository) AddMedicine(medicine model.Medicine) (int, error) {
+func (repo *Repository) AddMedicine(medicine model.Medicine) (int, error) {
 	var id int
 	err := repo.db.QueryRow(`INSERT INTO medicines(name, company,is_expired)
 	VALUES($1,$2,$3) RETURNING medicine_id;`, medicine.Name, medicine.Company, medicine.IsExpired).Scan(&id)
@@ -42,7 +42,7 @@ func (repo *repository) AddMedicine(medicine model.Medicine) (int, error) {
 	return id, nil
 }
 
-func (repo *repository) GetMedicine(id int) (model.Medicine, error) {
+func (repo *Repository) GetMedicine(id int) (model.Medicine, error) {
 	row := repo.db.QueryRow(
 		fmt.Sprintf(
 			"SELECT * FROM %s WHERE %s=$1;",
@@ -53,13 +53,13 @@ func (repo *repository) GetMedicine(id int) (model.Medicine, error) {
 	)
 	var med model.Medicine
 	if err := row.Scan(&med.MedicineID, &med.Name, &med.Company, &med.IsExpired); err != nil {
-		//	log.Fatal("repository ", err)
+		//	log.Fatal("Repository ", err)
 		return model.Medicine{}, err
 	}
 	return med, nil
 }
 
-func (repo *repository) GetAllMedicine() (*sql.Rows, error) {
+func (repo *Repository) GetAllMedicine() (*sql.Rows, error) {
 	//rows,err :=
 	return repo.db.Query(
 		fmt.Sprintf(
@@ -69,7 +69,7 @@ func (repo *repository) GetAllMedicine() (*sql.Rows, error) {
 	)
 }
 
-func (repo *repository) UpdateMedicine(newMedicine model.Medicine) error {
+func (repo *Repository) UpdateMedicine(newMedicine model.Medicine) error {
 	_, err := repo.db.Exec(
 		fmt.Sprintf(
 			"UPDATE %s SET %s=$1,%s=$2,%s=$3 WHERE %s=$4;",
@@ -87,7 +87,7 @@ func (repo *repository) UpdateMedicine(newMedicine model.Medicine) error {
 	return err
 }
 
-func (repo *repository) DeleteMedicine(id int) error {
+func (repo *Repository) DeleteMedicine(id int) error {
 	_, err := repo.db.Exec(
 		fmt.Sprintf(
 			"DELETE FROM %s WHERE %s=$1;",

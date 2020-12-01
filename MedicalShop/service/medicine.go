@@ -17,14 +17,14 @@ type MedicineService interface {
 	GetAll() ([]model.Medicine, apperrors.ErrorModel)
 }
 
-type medicineService struct {
+type Service struct {
 	medicines  []model.Medicine
-	repository db.RepositoryInterface
+	repository db.Repository
 	//err        apperrors.ErrorHandler
 }
 
-func NewMedicineService(repo db.RepositoryInterface) MedicineService {
-	return &medicineService{
+func NewMedicineService(repo db.Repository) *Service {
+	return &Service{
 		repository: repo,
 		//err:        err,
 		medicines: nil,
@@ -40,7 +40,7 @@ func findMedicineByID(id int, medicines []model.Medicine) (model.Medicine, int) 
 	return model.Medicine{}, -1
 }
 
-func (service *medicineService) Add(medicine model.Medicine) (int, apperrors.ErrorModel) {
+func (service *Service) Add(medicine model.Medicine) (int, apperrors.ErrorModel) {
 	service.medicines = append(service.medicines, medicine)
 	id, err := service.repository.AddMedicine(medicine)
 	if err != nil {
@@ -57,7 +57,7 @@ func (service *medicineService) Add(medicine model.Medicine) (int, apperrors.Err
 	return id, apperrors.ErrorModel{}
 }
 
-func (service *medicineService) Update(medicine model.Medicine) (bool, apperrors.ErrorModel) {
+func (service *Service) Update(medicine model.Medicine) (bool, apperrors.ErrorModel) {
 	// if _, index := findMedicineByID(medicine.MedicineID, service.medicines); index != -1 {
 	// 	service.medicines = append(service.medicines[:index], service.medicines[index+1:]...)
 	// 	service.medicines = append(service.medicines, medicine)
@@ -76,7 +76,7 @@ func (service *medicineService) Update(medicine model.Medicine) (bool, apperrors
 	}
 	return true, apperrors.ErrorModel{}
 }
-func (service *medicineService) Delete(id int) (bool, apperrors.ErrorModel) {
+func (service *Service) Delete(id int) (bool, apperrors.ErrorModel) {
 	// if _, index := findMedicineByID(id, service.medicines); index != -1 {
 	// 	service.medicines = append(service.medicines[:index], service.medicines[index+1:]...)
 	// 	return true
@@ -95,7 +95,7 @@ func (service *medicineService) Delete(id int) (bool, apperrors.ErrorModel) {
 	}
 	return true, apperrors.ErrorModel{}
 }
-func (service *medicineService) Get(id int) (model.Medicine, apperrors.ErrorModel) {
+func (service *Service) Get(id int) (model.Medicine, apperrors.ErrorModel) {
 	if item, index := findMedicineByID(id, service.medicines); index != -1 {
 		return item, apperrors.ErrorModel{}
 	} else {
@@ -117,7 +117,7 @@ func (service *medicineService) Get(id int) (model.Medicine, apperrors.ErrorMode
 	}
 
 }
-func (service *medicineService) GetAll() ([]model.Medicine, apperrors.ErrorModel) {
+func (service *Service) GetAll() ([]model.Medicine, apperrors.ErrorModel) {
 	service.medicines = nil
 	rows, err := service.repository.GetAllMedicine()
 	if err == nil {
