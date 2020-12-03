@@ -10,10 +10,10 @@ import (
 
 func ConnectToPostgres(databaseURI string) (*sql.DB, apperrors.ErrorModel) {
 
-	connStr := databaseURI //"postgres://postgres:aayush15@localhost/medicalShop?sslmode=verify-full"
+	connStr := databaseURI //"postgres://postgres:aayush15@localhost/medicalShop?sslmode=disable"
 
 	db, err := sql.Open("postgres", connStr)
-	log.Println("DB ", &db)
+	//log.Println("DB ", &db)
 	erro := db.Ping()
 	if erro != nil {
 		log.Fatal(erro)

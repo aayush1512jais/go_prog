@@ -48,8 +48,8 @@ func LoadApp() apperrors.ErrorModel { //(*AppContext, error) {
 
 	//var err apperrors.ErrorHandler = apperrors.NewErrorHandler()
 	repository := db.NewRepository(database)
-	medicineService := service.NewMedicineService(*repository) //, err)
-	medicineController := controller.NewMedicineController(*medicineService)
+	medicineService := service.NewMedicineService(repository) //, err)
+	medicineController := controller.NewMedicineController(medicineService)
 
 	router := SetupRoutes(medicineController)
 

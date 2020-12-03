@@ -19,11 +19,11 @@ type MedicineService interface {
 
 type Service struct {
 	medicines  []model.Medicine
-	repository db.Repository
+	repository *db.Repository
 	//err        apperrors.ErrorHandler
 }
 
-func NewMedicineService(repo db.Repository) *Service {
+func NewMedicineService(repo *db.Repository) *Service {
 	return &Service{
 		repository: repo,
 		//err:        err,

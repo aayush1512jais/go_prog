@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -20,17 +21,22 @@ type MedicineController interface {
 	Delete(w http.ResponseWriter, r *http.Request)
 	Get(w http.ResponseWriter, r *http.Request)
 	GetAll(w http.ResponseWriter, r *http.Request)
+	ServerStatus(w http.ResponseWriter, r *http.Request)
 }
 
 type Controller struct {
-	service service.Service
+	service *service.Service
 }
 
-func NewMedicineController(service service.Service) *Controller {
+func NewMedicineController(service *service.Service) *Controller {
 	return &Controller{
 		service: service,
 	}
 
+}
+func (c *Controller) ServerStatus(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprintf(w, "Server Running!!")
 }
 
 func (c *Controller) Add(w http.ResponseWriter, r *http.Request) {
@@ -91,10 +97,11 @@ func (c *Controller) Delete(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	if id, err := strconv.Atoi(params["id"]); err == nil {
 		if status, err := c.service.Delete(id); status {
-			Message := struct {
-				Message string `json:"message,omitempty"`
-			}{Message: "Deleted Successfully"}
-			json.NewEncoder(w).Encode(Message)
+			// Message := struct {
+			// 	Message string `json:"message,omitempty"`
+			// }{Message: "Deleted Successfully"}
+			// json.NewEncoder(w).Encode(Message)
+			fmt.Fprintf(w, "Deleted")
 			return
 		} else {
 			http.Error(w, err.Message+"\n error: "+err.Error.Error(), err.Code)
