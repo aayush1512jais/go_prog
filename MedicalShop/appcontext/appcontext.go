@@ -29,8 +29,8 @@ func LoadApp() apperrors.ErrorModel { //(*AppContext, error) {
 	if enverr != nil {
 		error := apperrors.ErrorModel{
 			Message: "Cannot read environment variables",
-			Error:   enverr,
-			Code:    502,
+			//Error:   enverr,
+			Code: 502,
 		}
 		log.Fatal(error)
 		return error

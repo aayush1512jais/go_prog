@@ -19,8 +19,8 @@ func ConnectToPostgres(databaseURI string) (*sql.DB, apperrors.ErrorModel) {
 		log.Fatal(erro)
 		error := apperrors.ErrorModel{
 			Message: "Database connection dead",
-			Error:   erro,
-			Code:    502,
+
+			Code: 502,
 		}
 		return nil, error
 		//return true
@@ -29,8 +29,8 @@ func ConnectToPostgres(databaseURI string) (*sql.DB, apperrors.ErrorModel) {
 		log.Fatal(err)
 		error := apperrors.ErrorModel{
 			Message: "Cannot connect to postgresql",
-			Error:   err,
-			Code:    502,
+
+			Code: 502,
 		}
 		return nil, error
 		//return true

@@ -43,7 +43,7 @@ func (c *Controller) Add(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var medicine model.Medicine
 	if err := json.NewDecoder(r.Body).Decode(&medicine); err == nil {
-		if id, err := c.service.Add(medicine); id != -1 {
+		if id, err := c.service.Add(medicine); id != -1 && err == nil {
 			Message := struct {
 				Message     string `json:"message,omitempty"`
 				Medicine_id int    `json:"medicine_id,omitempty"`
@@ -53,15 +53,16 @@ func (c *Controller) Add(w http.ResponseWriter, r *http.Request) {
 
 			return
 		} else {
-			http.Error(w, err.Message+"\n error: "+err.Error.Error(), err.Code)
+			apperrors.ErrorResponse(err, w)
 		}
 	} else {
-		err := apperrors.ErrorModel{
-			Message: "Failed to parse body",
-			Error:   err,
-			Code:    302,
-		}
-		http.Error(w, err.Message+"\n error: "+err.Error.Error(), err.Code)
+		// err := apperrors.ErrorModel{
+		// 	Message: "Failed to parse body",
+		// 	//Error:   err,
+		// 	Code: 302,
+		// }
+		// http.Error(w, err.Message, err.Code)
+		apperrors.ErrorResponse(apperrors.ErrBadRequest, w)
 	}
 	//fmt.Fprintf(w, "Unsuccessful")
 
@@ -71,23 +72,24 @@ func (c *Controller) Update(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var medicine *model.Medicine
 	if err := json.NewDecoder(r.Body).Decode(&medicine); err == nil {
-		if status, err := c.service.Update(*medicine); status {
+		if err := c.service.Update(*medicine); err == nil {
 			Message := struct {
 				Message string `json:"message,omitempty"`
 			}{Message: "Updated Successfully"}
 			json.NewEncoder(w).Encode(Message)
 			return
 		} else {
-			http.Error(w, err.Message+"\n error: "+err.Error.Error(), err.Code)
+			apperrors.ErrorResponse(err, w)
 		}
 	} else {
 		//log.Fatal(err)
-		err := apperrors.ErrorModel{
-			Message: "Failed to parse body",
-			Error:   err,
-			Code:    302,
-		}
-		http.Error(w, err.Message+"\n error: "+err.Error.Error(), err.Code)
+		// err := apperrors.ErrorModel{
+		// 	Message: "Failed to parse body",
+		// 	//	Error:   err,
+		// 	Code: 302,
+		// }
+		//http.Error(w, err.Message, err.Code)
+		apperrors.ErrorResponse(apperrors.ErrBadRequest, w)
 	}
 
 }
@@ -96,24 +98,25 @@ func (c *Controller) Delete(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
 	if id, err := strconv.Atoi(params["id"]); err == nil {
-		if status, err := c.service.Delete(id); status {
-			// Message := struct {
-			// 	Message string `json:"message,omitempty"`
-			// }{Message: "Deleted Successfully"}
-			// json.NewEncoder(w).Encode(Message)
-			fmt.Fprintf(w, "Deleted")
+		if err := c.service.Delete(id); err == nil {
+			Message := struct {
+				Message string `json:"message,omitempty"`
+			}{Message: "Deleted Successfully"}
+			json.NewEncoder(w).Encode(Message)
+
 			return
 		} else {
-			http.Error(w, err.Message+"\n error: "+err.Error.Error(), err.Code)
+			apperrors.ErrorResponse(err, w)
 		}
 	} else {
-		log.Fatal(err)
-		err := apperrors.ErrorModel{
-			Message: "Failed to parse params",
-			Error:   err,
-			Code:    302,
-		}
-		http.Error(w, err.Message+"\n error: "+err.Error.Error(), err.Code)
+		// log.Fatal(err)
+		// err := apperrors.ErrorModel{
+		// 	Message: "Failed to parse params",
+		// 	//Error:   err,
+		// 	Code: 302,
+		// }
+		//http.Error(w, err.Message, err.Code)
+		apperrors.ErrorResponse(apperrors.ErrBadRequest, w)
 	}
 }
 
@@ -122,21 +125,22 @@ func (c *Controller) Get(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	if id, err := strconv.Atoi(params["id"]); err == nil {
 		medicine, err := c.service.Get(id)
-		if err == (apperrors.ErrorModel{}) {
+		if err == nil {
 			json.NewEncoder(w).Encode(medicine)
 			return
 		} else {
-			http.Error(w, err.Message+"\n error: "+err.Error.Error(), err.Code)
+			apperrors.ErrorResponse(err, w)
 
 		}
 	} else {
-		log.Fatal(err)
-		err := apperrors.ErrorModel{
-			Message: "Failed to parse params",
-			Error:   err,
-			Code:    302,
-		}
-		http.Error(w, err.Message+"\n error: "+err.Error.Error(), err.Code)
+		log.Println(err)
+		// err := apperrors.ErrorModel{
+		// 	Message: "Failed to parse params",
+		// 	Error:   err,
+		// 	Code:    302,
+		// }
+		//http.Error(w, err.Message, err.Code)
+		apperrors.ErrorResponse(apperrors.ErrBadRequest, w)
 	}
 
 }
@@ -144,11 +148,11 @@ func (c *Controller) Get(w http.ResponseWriter, r *http.Request) {
 func (c *Controller) GetAll(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	medicines, err := c.service.GetAll()
-	if err == (apperrors.ErrorModel{}) {
+	if err == nil {
 		json.NewEncoder(w).Encode(medicines)
 		return
 	} else {
-		http.Error(w, err.Message+"\n error: "+err.Error.Error(), err.Code)
+		apperrors.ErrorResponse(err, w)
 
 	}
 
