@@ -45,7 +45,7 @@ func (service *Service) Add(medicine model.Medicine) (int, error) {
 	id, err := service.repository.AddMedicine(medicine)
 	if err != nil {
 		log.Println("Service Add", err)
-		
+
 		return -1, apperrors.ErrActionFailed
 
 	}
