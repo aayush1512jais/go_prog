@@ -1,20 +1,15 @@
 package mocks
 
 import (
-	apperrors "github.com/aayush1512jais/go_prog/MedicalShop/apperrors"
-	mock "github.com/stretchr/testify/mock"
-
 	model "github.com/aayush1512jais/go_prog/MedicalShop/model"
+	mock "github.com/stretchr/testify/mock"
 )
 
 type MockService struct {
 	mock.Mock
 }
 
-func NewMockService() *MockService {
-	return &MockService{}
-}
-func (mock *MockService) Add(medicine model.Medicine) (int, apperrors.ErrorModel) {
+func (mock *MockService) Add(medicine model.Medicine) (int, error) {
 	args := mock.Called(medicine)
 
 	var result int
@@ -24,37 +19,30 @@ func (mock *MockService) Add(medicine model.Medicine) (int, apperrors.ErrorModel
 		result = args.Get(0).(int)
 	}
 
-	var result1 apperrors.ErrorModel
-	if rf, ok := args.Get(1).(func(model.Medicine) apperrors.ErrorModel); ok {
+	var result1 error
+	if rf, ok := args.Get(1).(func(model.Medicine) error); ok {
 		result1 = rf(medicine)
 	} else {
-		result1 = args.Get(1).(apperrors.ErrorModel)
+		result1 = args.Error(1)
 	}
 
 	return result, result1
 }
 
-func (mock *MockService) Delete(id int) (bool, apperrors.ErrorModel) {
+func (mock *MockService) Delete(id int) error {
 	args := mock.Called(id)
 
-	var result bool
-	if rf, ok := args.Get(0).(func(int) bool); ok {
+	var result error
+	if rf, ok := args.Get(0).(func(int) error); ok {
 		result = rf(id)
 	} else {
-		result = args.Get(0).(bool)
+		result = args.Error(0)
 	}
 
-	var result1 apperrors.ErrorModel
-	if rf, ok := args.Get(1).(func(int) apperrors.ErrorModel); ok {
-		result1 = rf(id)
-	} else {
-		result1 = args.Get(1).(apperrors.ErrorModel)
-	}
-
-	return result, result1
+	return result
 }
 
-func (mock *MockService) Get(id int) (model.Medicine, apperrors.ErrorModel) {
+func (mock *MockService) Get(id int) (model.Medicine, error) {
 	args := mock.Called(id)
 
 	var result model.Medicine
@@ -64,17 +52,17 @@ func (mock *MockService) Get(id int) (model.Medicine, apperrors.ErrorModel) {
 		result = args.Get(0).(model.Medicine)
 	}
 
-	var result1 apperrors.ErrorModel
-	if rf, ok := args.Get(1).(func(int) apperrors.ErrorModel); ok {
+	var result1 error
+	if rf, ok := args.Get(1).(func(int) error); ok {
 		result1 = rf(id)
 	} else {
-		result1 = args.Get(1).(apperrors.ErrorModel)
+		result1 = args.Error(1)
 	}
 
 	return result, result1
 }
 
-func (mock *MockService) GetAll() ([]model.Medicine, apperrors.ErrorModel) {
+func (mock *MockService) GetAll() ([]model.Medicine, error) {
 	args := mock.Called()
 
 	var result []model.Medicine
@@ -86,32 +74,25 @@ func (mock *MockService) GetAll() ([]model.Medicine, apperrors.ErrorModel) {
 		}
 	}
 
-	var result1 apperrors.ErrorModel
-	if rf, ok := args.Get(1).(func() apperrors.ErrorModel); ok {
+	var result1 error
+	if rf, ok := args.Get(1).(func() error); ok {
 		result1 = rf()
 	} else {
-		result1 = args.Get(1).(apperrors.ErrorModel)
+		result1 = args.Error(1)
 	}
 
 	return result, result1
 }
 
-func (mock *MockService) Update(medicine model.Medicine) (bool, apperrors.ErrorModel) {
+func (mock *MockService) Update(medicine model.Medicine) error {
 	args := mock.Called(medicine)
 
-	var result bool
-	if rf, ok := args.Get(0).(func(model.Medicine) bool); ok {
+	var result error
+	if rf, ok := args.Get(0).(func(model.Medicine) error); ok {
 		result = rf(medicine)
 	} else {
-		result = args.Get(0).(bool)
+		result = args.Error(0)
 	}
 
-	var result1 apperrors.ErrorModel
-	if rf, ok := args.Get(1).(func(model.Medicine) apperrors.ErrorModel); ok {
-		result1 = rf(medicine)
-	} else {
-		result1 = args.Get(1).(apperrors.ErrorModel)
-	}
-
-	return result, result1
+	return result
 }
