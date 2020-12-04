@@ -10,7 +10,7 @@ import (
 )
 
 type MedicineService interface {
-	Add(medicine model.Medicine) (int, error)
+	Add(medicine model.Medicine) error
 	Update(medicine model.Medicine) error
 	Delete(id int) error
 	Get(id int) (model.Medicine, error)
@@ -18,48 +18,51 @@ type MedicineService interface {
 }
 
 type Service struct {
-	medicines  []model.Medicine
-	repository *db.Repository
+	// medicines  []model.Medicine
+	// repository *db.Repository
 	//err        apperrors.ErrorHandler
 }
 
-func NewMedicineService(repo *db.Repository) *Service {
-	return &Service{
-		repository: repo,
-		//err:        err,
-		medicines: nil,
-	}
+var repository db.RepositoryInterface
+
+func NewMedicineService(repo db.RepositoryInterface) *Service {
+	repository = repo
+	return &Service{}
+
+	//err:        err,
+	//	medicines: nil,
+	//}
 }
 
-func findMedicineByID(id int, medicines []model.Medicine) (model.Medicine, int) {
-	for index, item := range medicines {
-		if item.MedicineID == id {
-			return item, index
-		}
-	}
-	return model.Medicine{}, -1
-}
+// func findMedicineByID(id int, medicines []model.Medicine) (model.Medicine, int) {
+// 	for index, item := range medicines {
+// 		if item.MedicineID == id {
+// 			return item, index
+// 		}
+// 	}
+// 	return model.Medicine{}, -1
+// }
 
-func (service *Service) Add(medicine model.Medicine) (int, error) {
-	service.medicines = append(service.medicines, medicine)
-	id, err := service.repository.AddMedicine(medicine)
+func (*Service) Add(medicine model.Medicine) error {
+	//	medicines = append(medicines, medicine)
+	err := repository.AddMedicine(medicine)
 	if err != nil {
 		log.Println("Service Add", err)
 
-		return -1, apperrors.ErrActionFailed
+		return apperrors.ErrActionFailed
 
 	}
-	return id, nil
+	return nil
 }
 
-func (service *Service) Update(medicine model.Medicine) error {
-	// if _, index := findMedicineByID(medicine.MedicineID, service.medicines); index != -1 {
-	// 	service.medicines = append(service.medicines[:index], service.medicines[index+1:]...)
-	// 	service.medicines = append(service.medicines, medicine)
+func (*Service) Update(medicine model.Medicine) error {
+	// if _, index := findMedicineByID(medicine.MedicineID, medicines); index != -1 {
+	// 	medicines = append(medicines[:index], medicines[index+1:]...)
+	// 	medicines = append(medicines, medicine)
 	//	return true
 	//}
-	service.medicines = nil
-	if err := service.repository.UpdateMedicine(medicine); err != nil {
+	//medicines = nil
+	if err := repository.UpdateMedicine(medicine); err != nil {
 		log.Println("service Update", err)
 		// error := apperrors.ErrorModel{
 		// 	Message: "Failed to Update requsted medicine",
@@ -71,14 +74,14 @@ func (service *Service) Update(medicine model.Medicine) error {
 	}
 	return nil
 }
-func (service *Service) Delete(id int) error {
-	// if _, index := findMedicineByID(id, service.medicines); index != -1 {
-	// 	service.medicines = append(service.medicines[:index], service.medicines[index+1:]...)
+func (*Service) Delete(id int) error {
+	// if _, index := findMedicineByID(id, medicines); index != -1 {
+	// 	medicines = append(medicines[:index], medicines[index+1:]...)
 	// 	return true
 	// }
 	// return false
-	service.medicines = nil
-	if err := service.repository.DeleteMedicine(id); err != nil {
+	//medicines = nil
+	if err := repository.DeleteMedicine(id); err != nil {
 		log.Println("service Delete ", err)
 		// error := apperrors.ErrorModel{
 		// 	Message: "Failed to Delete requsted medicine",
@@ -90,32 +93,33 @@ func (service *Service) Delete(id int) error {
 	}
 	return nil
 }
-func (service *Service) Get(id int) (model.Medicine, error) {
-	if item, index := findMedicineByID(id, service.medicines); index != -1 {
-		return item, nil
-	} else {
+func (*Service) Get(id int) (model.Medicine, error) {
+	// if item, index := findMedicineByID(id, medicines); index != -1 {
+	// 	return item, nil
+	// } else {
 
-		item, err := service.repository.GetMedicine(id)
-		if err != nil {
-			log.Println("Service ", err)
-			// error := apperrors.ErrorModel{
-			// 	Message: "Cannot Find requsted medicine",
-			// 	Error:   err,
-			// 	Code:    502,
-			// }
+	item, err := repository.GetMedicine(id)
+	if err != nil {
+		log.Println("Service ", err)
+		// error := apperrors.ErrorModel{
+		// 	Message: "Cannot Find requsted medicine",
+		// 	Error:   err,
+		// 	Code:    502,
+		// }
 
-			return model.Medicine{}, apperrors.ErrDataNotFound
+		return model.Medicine{}, apperrors.ErrDataNotFound
 
-		}
-
-		return item, nil
 	}
 
+	return item, nil
+	//	}
+
 }
-func (service *Service) GetAll() ([]model.Medicine, error) {
-	service.medicines = nil
-	rows, err := service.repository.GetAllMedicine()
+func (*Service) GetAll() ([]model.Medicine, error) {
+	//medicines = nil
+	rows, err := repository.GetAllMedicine()
 	if err == nil {
+		var meds []model.Medicine
 		for rows.Next() {
 
 			var med model.Medicine
@@ -126,10 +130,10 @@ func (service *Service) GetAll() ([]model.Medicine, error) {
 				return nil, apperrors.ErrDatabaseRecord
 			}
 
-			service.medicines = append(service.medicines, med)
+			meds = append(meds, med)
 		}
 
-		return service.medicines, nil
+		return meds, nil
 	} else {
 		log.Println("service GetAll ", err)
 		// error := apperrors.ErrorModel{

@@ -43,10 +43,10 @@ func (c *Controller) Add(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var medicine model.Medicine
 	if err := json.NewDecoder(r.Body).Decode(&medicine); err == nil {
-		if id, err := c.service.Add(medicine); id != -1 && err == nil {
+		if id, err := c.service.Add(medicine); err == nil {
 			Message := struct {
 				Message     string `json:"message,omitempty"`
-				Medicine_id int    `json:"medicine_id,omitempty"`
+				Medicine_id string `json:"medicine_id,omitempty"`
 			}{Message: "Added Successfully", Medicine_id: id}
 			//log.Fatal(Message)
 			json.NewEncoder(w).Encode(Message)

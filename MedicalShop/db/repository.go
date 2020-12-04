@@ -19,27 +19,27 @@ const (
 type Repository struct{ db *sql.DB }
 
 type RepositoryInterface interface {
-	AddMedicine(medicine model.Medicine) (int, error)
+	AddMedicine(medicine model.Medicine) error
 	GetMedicine(id int) (model.Medicine, error)
 	GetAllMedicine() (*sql.Rows, error)
 	UpdateMedicine(newMedicine model.Medicine) error
 	DeleteMedicine(id int) error
 }
 
-func NewRepository(database *sql.DB) *Repository {
+func NewRepository(database *sql.DB) RepositoryInterface {
 	return &Repository{
 		db: database,
 	}
 }
-func (repo *Repository) AddMedicine(medicine model.Medicine) (int, error) {
+func (repo *Repository) AddMedicine(medicine model.Medicine) error {
 	var id int
 	err := repo.db.QueryRow(`INSERT INTO medicines(name, company,is_expired)
 	VALUES($1,$2,$3) RETURNING medicine_id;`, medicine.Name, medicine.Company, medicine.IsExpired).Scan(&id)
 	if err != nil {
 		log.Fatal(err)
-		return -1, err
+		return err
 	}
-	return id, nil
+	return nil
 }
 
 func (repo *Repository) GetMedicine(id int) (model.Medicine, error) {
