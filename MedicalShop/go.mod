@@ -6,5 +6,7 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/joho/godotenv v1.3.0
 	github.com/lib/pq v1.8.0
+	github.com/stretchr/testify v1.6.1
 	gopkg.in/alioygur/gores.v1 v1.2.1
+
 )

@@ -10,11 +10,11 @@ import (
 )
 
 type MedicineService interface {
-	Add(medicine model.Medicine) (int, apperrors.ErrorModel)
-	Update(medicine model.Medicine) (bool, apperrors.ErrorModel)
-	Delete(id int) (bool, apperrors.ErrorModel)
-	Get(id int) (model.Medicine, apperrors.ErrorModel)
-	GetAll() ([]model.Medicine, apperrors.ErrorModel)
+	Add(medicine model.Medicine) (int, error)
+	Update(medicine model.Medicine) error
+	Delete(id int) error
+	Get(id int) (model.Medicine, error)
+	GetAll() ([]model.Medicine, error)
 }
 
 type Service struct {
@@ -45,12 +45,7 @@ func (service *Service) Add(medicine model.Medicine) (int, error) {
 	id, err := service.repository.AddMedicine(medicine)
 	if err != nil {
 		log.Println("Service Add", err)
-		// error := apperrors.ErrorModel{
-		// 	Message: "Failed to Add requsted medicine",
-		// 	//Error:   err,
-		// 	Code: 502,
-		// }
-
+		
 		return -1, apperrors.ErrActionFailed
 
 	}
