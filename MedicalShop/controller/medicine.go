@@ -46,7 +46,7 @@ func (c *Controller) Add(w http.ResponseWriter, r *http.Request) {
 		if id, err := c.service.Add(medicine); err == nil {
 			Message := struct {
 				Message     string `json:"message,omitempty"`
-				Medicine_id string `json:"medicine_id,omitempty"`
+				Medicine_id int    `json:"medicine_id,omitempty"`
 			}{Message: "Added Successfully", Medicine_id: id}
 			//log.Fatal(Message)
 			json.NewEncoder(w).Encode(Message)

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/aayush1512jais/go_prog/MedicalShop/apperrors"
 	"github.com/aayush1512jais/go_prog/MedicalShop/model"
 )
 
@@ -19,27 +20,27 @@ const (
 type Repository struct{ db *sql.DB }
 
 type RepositoryInterface interface {
-	AddMedicine(medicine model.Medicine) error
+	AddMedicine(medicine model.Medicine) (int, error)
 	GetMedicine(id int) (model.Medicine, error)
-	GetAllMedicine() (*sql.Rows, error)
+	GetAllMedicine() ([]model.Medicine, error)
 	UpdateMedicine(newMedicine model.Medicine) error
 	DeleteMedicine(id int) error
 }
 
-func NewRepository(database *sql.DB) RepositoryInterface {
+func NewRepository(database *sql.DB) *Repository {
 	return &Repository{
 		db: database,
 	}
 }
-func (repo *Repository) AddMedicine(medicine model.Medicine) error {
+func (repo *Repository) AddMedicine(medicine model.Medicine) (int, error) {
 	var id int
 	err := repo.db.QueryRow(`INSERT INTO medicines(name, company,is_expired)
 	VALUES($1,$2,$3) RETURNING medicine_id;`, medicine.Name, medicine.Company, medicine.IsExpired).Scan(&id)
 	if err != nil {
 		log.Fatal(err)
-		return err
+		return -1, err
 	}
-	return nil
+	return id, nil
 }
 
 func (repo *Repository) GetMedicine(id int) (model.Medicine, error) {
@@ -59,14 +60,29 @@ func (repo *Repository) GetMedicine(id int) (model.Medicine, error) {
 	return med, nil
 }
 
-func (repo *Repository) GetAllMedicine() (*sql.Rows, error) {
+func (repo *Repository) GetAllMedicine() ([]model.Medicine, error) {
 	//rows,err :=
-	return repo.db.Query(
+	rows, err := repo.db.Query(
 		fmt.Sprintf(
 			"SELECT * FROM %s",
 			MedicineTableName,
 		),
 	)
+	if err == nil {
+		var meds []model.Medicine
+		for rows.Next() {
+
+			var med model.Medicine
+			err = rows.Scan(&med.MedicineID, &med.Name, &med.Company, &med.IsExpired)
+			if err != nil {
+				log.Println("service GetAll ", err)
+				return nil, apperrors.ErrDatabaseRecord
+			}
+			meds = append(meds, med)
+		}
+		return meds, nil
+	}
+	return []model.Medicine{}, err
 }
 
 func (repo *Repository) UpdateMedicine(newMedicine model.Medicine) error {
